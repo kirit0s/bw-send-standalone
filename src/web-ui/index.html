@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <title>bitwarden non nonsence send client</title>
+  </head>
+  <body>
+    <script type="module">
+      import init, { decode } from "./pkg/bitwarden_send.js";
+      await init();
+
+      const x = decode();
+
+      const content = document.querySelector('#main');
+      content.textContent = x;
+    </script>
+    <div id="main"></div>
+  </body>
+</html>
+
