@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <title>bitwarden non nonsence send client</title>
+    <style>
+      body {
+        background: #0f0f23;
+        color: #cccccc;
+      }
+      #secret {
+        border: 1px solid #333340;
+        background: #10101a;
+        padding: 20px 30px;
+        margin: auto;
+        max-width: 400px;
+      }
+    </style>
+  </head>
+  <body>
+    <script type="module">
+      import init, { decrypt } from "/pkg/bitwarden_send.js";
+      await init();
+
+      const config = await fetch('/config.json')
+        .then(x => x.json())
+        .catch(() => ({}));
+      
+      const [id, key] = window.location.hash.split('/').slice(-2);
+      const sendData = await fetch(
+        `${config.baseUrl ?? ''}/api/sends/access/${id}`,
+        { method: 'POST', body: "{}" }
+      ).then(x => x.json());
+
+      const [iv, data] = sendData.text.text.slice(2).split('|');
+
+      const x = decrypt(
+        key.replace(/-/g, '+').replace(/_/g, '/') + '==',
+        data,
+        iv
+      );
+
+      const content = document.querySelector('#secret');
+      content.textContent = x;
+    </script>
+    <main>
+      <pre id="title"></pre>
+      <pre id="secret"></pre>
+    </main>
+  </body>
+</html>
+
